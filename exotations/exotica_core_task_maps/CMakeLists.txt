@@ -42,6 +42,7 @@ AddInitializer(
   joint_jerk_backward_difference
   look_at
   manipulability
+  manipulability_stability
 
   collision_distance
   variable_size_collision_distance
@@ -96,6 +97,7 @@ set(SOURCES
     src/joint_jerk_backward_difference.cpp
     src/look_at.cpp
     src/manipulability.cpp
+    src/manipulability_stability.cpp
 )
 
 add_library(${PROJECT_NAME} ${SOURCES})
