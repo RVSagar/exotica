@@ -39,8 +39,21 @@ void ManipulabilityStability::Update(Eigen::VectorXdRefConst x, Eigen::VectorXdR
 
     for (int i = 0; i < n_end_effs_; ++i)
     {
-        const Eigen::MatrixXd& J = kinematics[0].jacobian[i].data.topRows(n_rows_of_jac_);
-        phi(i) = -std::sqrt((J * J.transpose()).determinant());
+        // const Eigen::MatrixXd& J = kinematics[0].jacobian[i].data.topRows(n_rows_of_jac_);
+        // phi(i) = -std::sqrt((J * J.transpose()).determinant());
+        // if (debug_) HIGHLIGHT_NAMED("ManipulabilityStability", "phi(i)=" << phi(i));
+
+        const Eigen::MatrixXd& j_right = scene_->GetKinematicTree().Jacobian("hand_right_end_effector_link", KDL::Frame(), "arm_right_1_link", KDL::Frame());
+        double manip_right = std::sqrt((j_right * j_right.transpose()).determinant());
+
+        const Eigen::MatrixXd& j_left = scene_->GetKinematicTree().Jacobian("hand_left_end_effector_link", KDL::Frame(), "arm_left_1_link", KDL::Frame());
+        double manip_left = std::sqrt((j_left * j_left.transpose()).determinant());
+
+        phi(i) = -std::min(manip_right, manip_left);
+        
+        if (debug_) HIGHLIGHT_NAMED("ManipulabilityStability", "phi-" << i << ": " <<phi(i));
+
+        // std::cout << " Final Manip: " << final_manip << std::endl;
     }
 }
 
